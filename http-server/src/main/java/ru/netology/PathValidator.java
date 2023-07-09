@@ -2,7 +2,9 @@ package ru.netology;
 
 import java.util.List;
 
-
+// принцип SOLID
+// класс должен обладпть одной ответственнностью
+// разные степени абстракции у методов
 public final class PathValidator {
     private static final List<String> VALID_PATHS = List.of(
             "/index.html",
@@ -27,3 +29,4 @@ public final class PathValidator {
     }
 }
 
+// перегрузка функций

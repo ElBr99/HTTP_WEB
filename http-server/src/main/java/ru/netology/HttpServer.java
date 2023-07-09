@@ -20,7 +20,7 @@ public class HttpServer implements Server {
         this.executorService = executorService;
         this.port = port;
     }
-
+// В задании сказано, выделить FixedThreadPool, то есть ExecutorService executor = Executors.newFixedThreadPool(5)
     @Override
     public void start() {
         try (final var serverSocket = new ServerSocket(port)) {
@@ -33,6 +33,7 @@ public class HttpServer implements Server {
         }
     }
 
+    // хэндлер - обработчик запроса
     private void requestHandler(Socket socket) {
         // read only request line for simplicity
         // must be in form GET /path HTTP/1.1
@@ -48,18 +49,18 @@ public class HttpServer implements Server {
                 return;
             }
 
-            final var path = parts[1];
-            if (!PathValidator.validate(path)) {
+            Request request = new Request(parts[1]);
+            if (!PathValidator.validate(request.getPath())) {
                 out.write(ResponseBuilder.notFoundResponse());
                 out.flush(); // прочитать
                 return;
             }
 
-            final var filePath = Path.of(".", "public", path);
+            final var filePath = Path.of(".", "public", request.getPath());
             final var mimeType = Files.probeContentType(filePath);
 
             // special case for classic
-            if (path.equals("/classic.html")) {
+            if (request.getPath().equals("/classic.html")) {
                 final var template = Files.readString(filePath);
                 final var content = template.replace(
                         "{time}",
